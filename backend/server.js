@@ -13,6 +13,15 @@ mongoose.connect(process.env.MONGODB_URI)
 // Import Product Routes
 const productRoutes = require('./routes/productRoutes');
 
+// Import Auth Routes
+const authRoutes = require('./routes/authRoutes');
+
+// Use Auth Routes
+app.use('/api/auth', authRoutes);
+
+// Use Product Routes
+app.use('/api/products', productRoutes);
+
 // Use Product Routes - All endpoints will start with /api/products
 app.use('/api/products', productRoutes);
 
@@ -24,3 +33,4 @@ app.use((err, req, res, next) => {
 
 // 4. Start the server
 app.listen(3000, () => console.log('Server running on port 3000')); // Corrected arrow function syntax
+

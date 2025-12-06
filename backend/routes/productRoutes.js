@@ -1,23 +1,16 @@
-// routes/productRoutes.js
+// backend/routes/productRoutes.js
 const router = require('express').Router();
 const productController = require('../controllers/productController');
-const { validateProduct } = require('../middleware/validateProduct');
+const validateProduct = require('../middleware/validateProduct').validateProduct;
+const { protect } = require('../middleware/auth'); // NEW: Import the protect middleware
 
-// POST /api/products - Create a new product
-router.post('/', validateProduct, productController.createProduct);
+// POST /api/products - Create a new product (NOW PROTECTED)
+router.post('/', protect, validateProduct, productController.createProduct); // Apply protect middleware
 
-// GET /api/products - Get all products
+// The rest of the routes (GET, PUT, DELETE) remain the same...
 router.get('/', productController.getAllProducts);
-
-// --- Routes to Add ---
-
-// GET /api/products/:id - Get a single product by ID
-router.get('/:id', productController.getProductById); // Add GET/:id [cite: 90]
-
-// PUT /api/products/:id - Update a product by ID (Needs validation too)
-router.put('/:id', validateProduct, productController.updateProduct); // Add PUT/:id [cite: 90]
-
-// DELETE /api/products/:id - Delete a product by ID
-router.delete('/:id', productController.deleteProduct); // Add DELETE/:id [cite: 90]
+router.get('/:id', productController.getProductById);
+router.put('/:id', validateProduct, productController.updateProduct); 
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;
