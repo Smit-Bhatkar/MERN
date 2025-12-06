@@ -1,20 +1,12 @@
-// models/Product.js
+// backend/models/Product.js
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true 
-    },
-    price: { 
-        type: Number, 
-        required: true, 
-        min: 0
-    },
-    inStock: { 
-        type: Boolean, 
-        default: true 
-    }
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt [cite: 109]
+    name: { type: String, required: true },
+    price: { type: Number, required: true, min: 0},
+    // NEW: Add the image field
+    image: { type: String }, 
+    inStock: { type: Boolean, default: true }
+}, { timestamps: true });
 
-module.exports = mongoose.model('Product', productSchema); // [cite: 51]
+module.exports = mongoose.model('Product', productSchema);

@@ -3,9 +3,10 @@ const router = require('express').Router();
 const productController = require('../controllers/productController');
 const validateProduct = require('../middleware/validateProduct').validateProduct;
 const { protect } = require('../middleware/auth'); // NEW: Import the protect middleware
+const upload = require('../middleware/upload'); // NEW: Import file upload middleware
 
-// POST /api/products - Create a new product (NOW PROTECTED)
-router.post('/', protect, validateProduct, productController.createProduct); // Apply protect middleware
+// Updated POST route with file upload middleware (assuming 'image' is the field name)
+router.post('/', protect, upload.single('image'), validateProduct, productController.createProduct); // Apply protect middleware
 
 // The rest of the routes (GET, PUT, DELETE) remain the same...
 router.get('/', productController.getAllProducts);

@@ -1,7 +1,7 @@
 // frontend/src/context/AuthContext.js
 import { createContext, useState, useEffect, useContext } from 'react';
-import jwtDecode from 'jwt-decode';
-import API from '../services/api'; // Assuming your API instance is imported correctly
+import { jwtDecode } from 'jwt-decode';
+import { API } from '../services/api'; // Assuming your API instance is imported correctly
 
 const AuthContext = createContext();
 
@@ -24,15 +24,12 @@ export function AuthProvider({ children }) {
             const res = await API.post('/auth/login', { email, password }); 
             localStorage.setItem('token', res.data.token);
             setToken(res.data.token);
-            
-            // Set user data from the newly received token
             setUser(jwtDecode(res.data.token)); 
         } catch (error) {
-            console.error("Login failed:", error.response?.data || error.message);
-            throw error;
+            console.error("Login failed:", error);
+            throw error; // <--- This throws the error back to the component
         }
     };
-
     // Logout function
     const logout = () => {
         localStorage.removeItem('token');

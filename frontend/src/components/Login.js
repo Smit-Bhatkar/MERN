@@ -1,21 +1,27 @@
 // frontend/src/components/Login.js
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAuth();
-    const navigate = useNavigate(); // Hook to navigate after successful login
+    const { login } = useAuth(); // Getting login from Context, NOT Redux
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
-            navigate('/'); // Redirect to the protected home page on success
+            alert("Button Clicked!");// Context's login function is async but doesn't usually return a "payload" object
+            await login(email, password); 
+            
+            // If we get here, login succeeded
+            alert('Login Successful!'); 
+            navigate('/'); 
         } catch (error) {
-            alert('Login failed. Check your credentials.'); // Simple user feedback
+            // If login fails, the error is caught here
+            alert('Login failed. Check your credentials.');
+            console.error(error);
         }
     };
 
@@ -40,5 +46,6 @@ function Login() {
         </form>
     );
 }
+
 
 export default Login;
