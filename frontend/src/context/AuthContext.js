@@ -1,47 +1,49 @@
 // frontend/src/context/AuthContext.js
-import { createContext, useState, useEffect, useContext } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { API } from '../services/api'; // Assuming your API instance is imported correctly
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { jwtDecode } from 'jwt-decode'; // Fix import
+import { API } from '../services/api'; // Fix import
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token')); 
+    const [token, setToken] = useState(localStorage.getItem('token'));
 
-    // Check token on app load
     useEffect(() => {
         if (token) {
-            // Decodes the token to get user info (id, etc.)
-            const decoded = jwtDecode(token); 
-            setUser(decoded);
+            try {
+                const decoded = jwtDecode(token);
+                // Check if token is expired
+                if (decoded.exp * 1000 < Date.now()) {
+                    logout();
+                } else {
+                    setUser(decoded);
+                }
+            } catch (err) {
+                logout();
+            }
         }
     }, [token]);
 
-    // Login function
     const login = async (email, password) => {
-        try {
-            const res = await API.post('/auth/login', { email, password }); 
-            localStorage.setItem('token', res.data.token);
-            setToken(res.data.token);
-            setUser(jwtDecode(res.data.token)); 
-        } catch (error) {
-            console.error("Login failed:", error);
-            throw error; // <--- This throws the error back to the component
-        }
+        const res = await API.post('/auth/login', { email, password });
+        localStorage.setItem('token', res.data.token);
+        setToken(res.data.token);
+        setUser(jwtDecode(res.data.token));
     };
-    // Logout function
+
     const logout = () => {
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
     };
 
+    // Make sure 'logout' and 'user' are passed here
     return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
 export const useAuth = () => useContext(AuthContext);
